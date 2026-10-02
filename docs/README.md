@@ -1,4 +1,4 @@
-# OPS ManUAl
+# OPS manUAl
 
 ## 1. MISSION & STRUCTURE
 
@@ -120,8 +120,8 @@ flowchart TD
     donation["Donation received"] --> form["Donor form"]
     form --> details["Above EUR 100: donor details and proof"]
     form --> shipping["Shipping spreadsheet"]
-    shipping --> regional["Regional postal CSV"]
-    shipping --> worldwide["Worldwide shipping CSV"]
+    shipping --> regional["U.S. CSV"]
+    shipping --> worldwide["RoW CSV"]
     form --> messages["Vehicle-message sheet: from EUR 1,500"]
     messages --> video["Record thank-you video"]
     video --> subtitles["Subtitles and English translation"]
