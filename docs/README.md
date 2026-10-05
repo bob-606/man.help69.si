@@ -218,7 +218,7 @@ The fulfillment form feeds **three separate outputs**: postal data, the packing 
 
 | Route | Dispatch procedure | Constraint |
 | --- | --- | --- |
-| Worldwide | Generate worldwide-service labels; pack envelopes; hand the batch to the postal collector. | Use that carrier's CSV format. |
+| RoW (Worldwide) | Generate worldwide-service labels; pack envelopes; hand the batch to the postal collector. | Use that carrier's CSV format. |
 | US | Generate domestic labels using the local dispatch address; consolidate prepared envelopes into a bulk box; transfer it to the local coordinator for domestic posting. | Use a separate CSV format. Consolidation adds waiting time. |
 
 The US batch route supports a donor market of roughly **30%** of the donor base. Indicative postage is approximately **$2 per item**, compared with approximately **$20** on the earlier individual route. Assess total batch cost separately. Batch collection is roughly **one–two weeks**, depending on the shipping queue; this is a planning interval.
