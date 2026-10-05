@@ -1,4 +1,4 @@
-# OPS manUAl (V2–05.OCT.2026)
+# OPS manUAl (v2–05.OCT.2026)
 
 [Mission](#mission) · [Marketing](#marketing) · [MilOps](#milops) · [DonorOps](#donorops) · [OrgOps](#orgops) · [Handoffs](#handoffs) · [Development](#development)
 
