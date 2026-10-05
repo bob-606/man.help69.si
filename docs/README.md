@@ -12,7 +12,7 @@ Deliver vehicles to approved receiving units. Generate funds, fulfill donor comm
 
 | Pillar | Responsibility | Operational output |
 | --- | --- | --- |
-| **Marketing & Fundraising** | Campaigns, public content, acquisition, recurring-donor conversion, performance reporting. | Funded campaigns and sustained donor support. |
+| **Marketing** | Campaigns, public content, acquisition, recurring-donor conversion, performance reporting. | Funded campaigns and sustained donor support. |
 | **MilOps** | Unit intake, approval, procurement, allocation, convoys, documents, delivery. | Vehicles delivered to approved units; CRM cycle completed. |
 | **DonorOps** | Donation records, eligibility, patches, shipping, vehicle messages, personal thank-you videos. | Donor benefits and communications fulfilled. |
 | **OrgOps** | People, access, systems, records, automation, coordination. | Reliable handoffs and shared operational information. |
