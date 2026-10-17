@@ -1,4 +1,6 @@
-# OPS manUAl
+# OPS manUAl (v1)
+
+*Superseded by the [v2 manual](README.md).*
 
 ## 1. MISSION & STRUCTURE
 
@@ -14,9 +16,6 @@ Deliver vehicles to approved receiving units. Raise funds, fulfill donor commitm
 | **OrgOps** | Support all three through people, systems, records, and coordination. |
 
 ---
-
-. 
-
 
 ## 2. MARKETING (+ FUNDRAISING)
 
@@ -38,8 +37,6 @@ Deliver vehicles to approved receiving units. Raise funds, fulfill donor commitm
 - Donor eligibility and fulfillment follow DonorOps rules.
 
 ---
-
-.
 
 ## 3. MilOPS
 
@@ -103,8 +100,6 @@ flowchart TD
 
 ---
 
-.
-
 ## 4. DonorOPS
 
 **Purpose:** Maintain donor records and deliver the benefits and follow-up attached to donations.
@@ -153,8 +148,6 @@ flowchart TD
 
 ---
 
-.
-
 ## 5. OrgOPS (aka SHARED SUPPORT)
 
 **Purpose:** Keep the mission pillars coordinated, accountable, and supported by usable records and systems.
@@ -183,8 +176,6 @@ flowchart TD
 - Keep the unit-application and donor-fulfillment form workflows distinct.
 
 ---
-
-.
 
 ## 6. PILLAR HANDOFFS
 
