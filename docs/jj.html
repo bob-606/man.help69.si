@@ -67,10 +67,11 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
   button.switch:hover{ color:var(--fg); }
   button.switch[aria-checked="true"]{ color:var(--fg); }
 
-  .tablewrap{ overflow-x:auto; }
+  /* table wrapper: not a scroll container, so the sticky header can stick to the viewport */
   table{ width:100%; border-collapse:collapse; font-size:14px; }
   th, td{ padding:8px 10px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; }
   th{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; padding:6px 10px; }
+  thead th{ position:sticky; top:0; z-index:2; background:var(--bg); box-shadow:inset 0 -1px 0 var(--border); }
   th.sortable{ cursor:pointer; user-select:none; }
   th.sortable:hover{ color:var(--fg); }
   th .arrow{ font-size:10px; opacity:.35; margin-left:2px; }
@@ -78,6 +79,7 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
   th[data-active="true"] .arrow{ opacity:1; }
 
   tbody tr:hover{ background:var(--hover); }
+  tbody tr{ scroll-margin-top:40px; }   /* keep #jj-xx jumps and focused rows clear of the sticky header */
   td.task{ min-width:280px; }
   .mono{ font-variant-numeric:tabular-nums; white-space:nowrap; }
   .don-high{ color:var(--don-high); font-weight:600; }
@@ -103,8 +105,37 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
   .btn-reset{ font-weight:600; border-color:var(--muted); }
   .btn:focus-visible, .chip:focus-visible, button.exp:focus-visible, button.switch:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   th.sortable:focus-visible{ outline:2px solid var(--accent); outline-offset:-2px; }
+  tr.grp:focus-visible{ outline:2px solid var(--accent); outline-offset:-2px; }
+  tr.grp:focus-visible td{ background:var(--hover); }
   tr.sdesc td{ color:var(--muted); font-size:13px; }
   tr.ghand td{ color:var(--muted); font-size:13px; }
+
+  /* Phones: one stacked card per task — id + task, then time / donation / priority. */
+  @media screen and (max-width:720px){
+    #tbl thead{ display:none; }
+    #tbl, #tbl tbody, #tbl tr, #tbl td{ display:block; }
+    #tbl td{ border:0; }
+    #tbl tbody tr{ border-bottom:1px solid var(--border); }
+    #tbl tbody tr:last-child{ border-bottom:0; }
+    #tbl tr.grp td{ background:var(--chip); padding:9px 14px; }
+    #tbl tr.grp:hover td{ background:var(--hover); }
+    #tbl tr.gdesc td, #tbl tr.ghand td, #tbl tr.sdesc td{ padding:4px 14px 4px 26px; }
+    #tbl tr.gdesc td:empty, #tbl tr.ghand td:empty, #tbl tr.sdesc td:empty{ display:none; }
+    #tbl tr.sub{ display:grid; grid-template-columns:auto auto 1fr auto; grid-template-areas:"id task task task" "time don pri pri"; column-gap:10px; row-gap:3px; align-items:baseline; padding:9px 14px 10px; }
+    #tbl tr.sub td{ padding:0; }
+    #tbl tr.sub td.mono{ grid-area:id; }
+    #tbl tr.sub td.task{ grid-area:task; min-width:0; }
+    #tbl tr.sub td:nth-child(3){ grid-area:time; }
+    #tbl tr.sub td:nth-child(4){ grid-area:don; }
+    #tbl tr.sub td:nth-child(5){ grid-area:pri; }
+    #tbl tr.sub td:nth-child(4)::before, #tbl tr.sub td:nth-child(5)::before{ content:"· "; color:var(--muted); }
+    #tbl td.empty{ padding:24px 14px; }
+  }
+
+  /* Print: the JS unfolds everything first; keep the header static on paper. */
+  @media print{
+    thead th{ position:static; }
+  }
 </style>
 </head>
 <body>
@@ -240,6 +271,20 @@ function foldAll(){
   for (const g of groups) closedGroups.add(g.id);
 }
 
+/* Toggle one group / one explanation; keep keyboard focus on the same spot. */
+function toggleGroup(id){
+  if (closedGroups.has(id)) closedGroups.delete(id); else closedGroups.add(id);
+  render();
+  const row = document.querySelector('tr.grp[data-g="' + id + '"]');
+  if (row) row.focus({preventScroll:true});
+}
+function toggleDesc(id){
+  if (openDescs.has(id)) openDescs.delete(id); else openDescs.add(id);
+  render();
+  const btn = document.querySelector('button.exp[data-s="' + id + '"]');
+  if (btn) btn.focus({preventScroll:true});
+}
+
 function render(){
   const tbody = $('#tbl tbody');
   let html = '', shown = 0, total = 0, gshown = 0;
@@ -250,7 +295,7 @@ function render(){
     shown += vis.length; gshown++;
     const closed = closedGroups.has(g.id);
     const countTxt = vis.length < g.subs.length ? vis.length + ' of ' + g.subs.length + ' subtasks' : vis.length + ' subtasks';
-    html += '<tr class="grp" data-g="' + esc(g.id) + '">' +
+    html += '<tr class="grp" data-g="' + esc(g.id) + '" tabindex="0" aria-expanded="' + (closed ? 'false' : 'true') + '">' +
       '<td colspan="5"><span class="gm">' + (closed ? '▸' : '▾') + '</span><b>' + esc(g.id) + '</b> · ' + esc(g.name) + '<span class="gcount">' + countTxt + '</span></td></tr>';
     if (closed) continue;
     if (g.desc) html += '<tr class="gdesc"><td></td><td colspan="4">' + esc(g.desc) + '</td></tr>';
@@ -299,20 +344,18 @@ themeLabel();
 
 $('#tbl tbody').addEventListener('click', e => {
   const grp = e.target.closest('tr.grp');
-  if (grp){
-    const id = grp.dataset.g;
-    if (closedGroups.has(id)) closedGroups.delete(id); else closedGroups.add(id);
-    render();
-    return;
-  }
+  if (grp){ toggleGroup(grp.dataset.g); return; }
   const btn = e.target.closest('button.exp');
-  if (btn){
-    const id = btn.dataset.s;
-    if (openDescs.has(id)) openDescs.delete(id); else openDescs.add(id);
-    render();
-    return;
-  }
+  if (btn){ toggleDesc(btn.dataset.s); return; }
   if (e.target.closest('#clearf')){ clearFilters(); render(); }
+});
+
+$('#tbl tbody').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const grp = e.target.closest('tr.grp');
+  if (!grp) return;
+  e.preventDefault();
+  toggleGroup(grp.dataset.g);
 });
 
 document.querySelectorAll('.chip[data-group]').forEach(btn => {
@@ -363,10 +406,42 @@ $('#reset').addEventListener('click', () => {
   render();
 });
 
+/* Direct links: #jj-05 opens that group; #jj-05.3 also brings the task into view. */
+function openFromHash(){
+  const m = /^#(jj-\d+)(?:\.(\d+))?$/i.exec(location.hash);
+  if (!m) return;
+  const g = groups.find(x => x.id.toUpperCase() === m[1].toUpperCase());
+  if (!g) return;
+  if (closedGroups.has(g.id)){ closedGroups.delete(g.id); render(); }
+  let target = document.querySelector('tr.grp[data-g="' + g.id + '"]');
+  if (m[2]){
+    const btn = document.querySelector('button.exp[data-s="' + g.id + '.' + m[2] + '"]');
+    if (btn) target = btn.closest('tr');
+  }
+  if (target) target.scrollIntoView({block:'start'});
+}
+window.addEventListener('hashchange', openFromHash);
+
+/* Printing: unfold every group for the paper copy, then put the view back. */
+let printState = null;
+window.addEventListener('beforeprint', () => {
+  printState = {closed:[...closedGroups], open:[...openDescs]};
+  closedGroups.clear();
+  render();
+});
+window.addEventListener('afterprint', () => {
+  if (!printState) return;
+  closedGroups.clear(); for (const id of printState.closed) closedGroups.add(id);
+  openDescs.clear(); for (const id of printState.open) openDescs.add(id);
+  printState = null;
+  render();
+});
+
 (async function load(){
   groups = EMBEDDED;
   foldAll();
   render();
+  openFromHash();
   try {
     const res = await fetch('jj.md', {cache:'no-store'});
     if (!res.ok) throw new Error('HTTP ' + res.status);
