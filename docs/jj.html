@@ -54,8 +54,6 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
   .chip[aria-pressed="true"]{ background:var(--fg); border-color:var(--fg); color:var(--bg); }
   .chip:hover, .btn:hover{ border-color:var(--muted); background:var(--ctrlhbg); }
   .chip[aria-pressed="true"]:hover{ background:var(--fg); border-color:var(--fg); }
-  #theme{ white-space:nowrap; }
-
   .count{ color:var(--muted); font-size:13px; }
   .countbar{ display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin:6px 2px 14px; }
   .countbar #expand{ margin-left:auto; }
@@ -121,14 +119,14 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
     #tbl tr.grp:hover td{ background:var(--hover); }
     #tbl tr.gdesc td, #tbl tr.ghand td, #tbl tr.sdesc td{ padding:4px 14px 4px 26px; }
     #tbl tr.gdesc td:empty, #tbl tr.ghand td:empty, #tbl tr.sdesc td:empty{ display:none; }
-    #tbl tr.sub{ display:grid; grid-template-columns:auto auto 1fr auto; grid-template-areas:"id task task task" "time don pri pri"; column-gap:10px; row-gap:3px; align-items:baseline; padding:9px 14px 10px; }
-    #tbl tr.sub td{ padding:0; }
-    #tbl tr.sub td.mono{ grid-area:id; }
-    #tbl tr.sub td.task{ grid-area:task; min-width:0; }
-    #tbl tr.sub td:nth-child(3){ grid-area:time; }
-    #tbl tr.sub td:nth-child(4){ grid-area:don; }
-    #tbl tr.sub td:nth-child(5){ grid-area:pri; }
-    #tbl tr.sub td:nth-child(4)::before, #tbl tr.sub td:nth-child(5)::before{ content:"· "; color:var(--muted); }
+    #tbl tr.sub{ position:relative; padding:10px 14px 11px; }
+    #tbl tr.sub td{ display:inline; padding:0; }
+    #tbl tr.sub td.mono{ color:var(--muted); margin-right:8px; }
+    #tbl tr.sub td:nth-child(3)::before{ content:""; display:block; }   /* the meta line starts here */
+    #tbl tr.sub td:nth-child(3){ color:var(--muted); }
+    #tbl tr.sub td:nth-child(4)::before, #tbl tr.sub td:nth-child(5)::before{ content:" · "; color:var(--muted); }
+    #tbl tr.sub button.exp{ position:absolute; right:14px; bottom:10px; margin:0; }
+    #tbl .gcount{ white-space:nowrap; }
     #tbl td.empty{ padding:24px 14px; }
   }
 
@@ -144,7 +142,7 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
     <header>
       <h1>JJ's Task List</h1>
     </header>
-    <button class="btn" id="theme" type="button" title="Switch theme">☾ Dark</button>
+    <button class="switch" id="theme" type="button" role="switch" aria-checked="false" title="Toggle dark / light mode"><span class="track"><span class="thumb"></span></span><span class="swlabel">Dark</span></button>
   </div>
 
   <div class="legend">
@@ -332,7 +330,7 @@ function effDark(){
   const t = document.documentElement.dataset.theme;
   return t === 'dark' || (t !== 'light' && media.matches);
 }
-function themeLabel(){ themeBtn.textContent = effDark() ? '☀ Light' : '☾ Dark'; }
+function themeLabel(){ themeBtn.setAttribute('aria-checked', effDark() ? 'true' : 'false'); }
 themeBtn.addEventListener('click', () => {
   const next = effDark() ? 'light' : 'dark';
   document.documentElement.dataset.theme = next;
