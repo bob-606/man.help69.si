@@ -1,0 +1,3 @@
+# jj.md and jj.html would both render to /jj.html — keep the interactive page.
+exclude:
+  - jj.md
