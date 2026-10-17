@@ -177,7 +177,7 @@ const P_RANK = {P0:0, P1:1, P2:2, P3:3};
 let groups = [];
 let sort = {key:null, dir:1};            // dir: 1 asc, -1 desc; key null = file order
 const filters = {text:'', p:new Set(), donation:new Set()};
-const closedGroups = new Set();          // group IDs collapsed by the user
+const closedGroups = new Set();          // group IDs currently folded (the page opens fully folded)
 const openDescs = new Set();             // subtask IDs with the explanation expanded
 
 const $ = sel => document.querySelector(sel);
@@ -232,6 +232,12 @@ function passes(s){
 
 function allExpanded(){
   return groups.every(g => !closedGroups.has(g.id) && g.subs.every(s => openDescs.has(s.id)));
+}
+
+/* The page's default view: every group folded, no explanations open. */
+function foldAll(){
+  closedGroups.clear(); openDescs.clear();
+  for (const g of groups) closedGroups.add(g.id);
 }
 
 function render(){
@@ -336,8 +342,7 @@ $('#q').addEventListener('input', e => { filters.text = e.target.value.trim(); r
 
 $('#expand').addEventListener('click', () => {
   if (allExpanded()){
-    for (const g of groups) closedGroups.add(g.id);
-    openDescs.clear();
+    foldAll();
   } else {
     closedGroups.clear();
     for (const g of groups) for (const s of g.subs) openDescs.add(s.id);
@@ -354,12 +359,13 @@ function clearFilters(){
 $('#reset').addEventListener('click', () => {
   clearFilters();
   sort = {key:null, dir:1};
-  closedGroups.clear(); openDescs.clear();
+  foldAll();
   render();
 });
 
 (async function load(){
   groups = EMBEDDED;
+  foldAll();
   render();
   try {
     const res = await fetch('jj.md', {cache:'no-store'});
