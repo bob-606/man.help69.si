@@ -13,6 +13,7 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
     --bg:#ffffff; --fg:#1b1f24; --muted:#6b7280; --border:#e5e7eb; --accent:#2563eb;
     --chip:#f3f4f6; --hover:#f8fafc; --inputbg:#ffffff; --ctrlbd:#8b949e; --ctrlhbg:#e9edf1;
     --don-high:#047857; --don-med:#4b5563; --don-low:#9ca3af;
+    --pickbg:#fff8e6; --pickhover:#fdf1d6; --pickfg:#a16207;
     --b0bg:#fee2e2; --b0fg:#991b1b; --b1bg:#fef3c7; --b1fg:#92400e;
     --b2bg:#e5e7eb; --b2fg:#374151; --b3bg:#f3f4f6; --b3fg:#6b7280;
   }
@@ -28,6 +29,7 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
       --bg:#0f1216; --fg:#e7e9ec; --muted:#9aa3ad; --border:#242b33; --accent:#60a5fa;
       --chip:#171c22; --hover:#151a20; --inputbg:#10151a; --ctrlbd:#566171; --ctrlhbg:#1d252e;
       --don-high:#34d399; --don-med:#9ca3af; --don-low:#6b7280;
+      --pickbg:#221c10; --pickhover:#2a2315; --pickfg:#fbbf24;
       --b0bg:#3b1d1f; --b0fg:#fda4af; --b1bg:#3a2c10; --b1fg:#fcd34d;
       --b2bg:#272e36; --b2fg:#cbd5e1; --b3bg:#1d232a; --b3fg:#94a3b8;
     }
@@ -77,6 +79,9 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
   th[data-active="true"] .arrow{ opacity:1; }
 
   tbody tr:hover{ background:var(--hover); }
+  tbody tr.pick{ background:var(--pickbg); }
+  tbody tr.pick:hover{ background:var(--pickhover); }
+  .pk{ color:var(--pickfg); margin-right:5px; font-size:12px; }
   tbody tr{ scroll-margin-top:40px; }   /* keep #jj-xx jumps and focused rows clear of the sticky header */
   td.task{ min-width:280px; }
   .mono{ font-variant-numeric:tabular-nums; white-space:nowrap; }
@@ -149,6 +154,7 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
     <div class="leg"><span class="lbl">Time</span><span><b>S</b> = under a day · <b>M</b> = 1–5 days · <b>L</b> = 1–3 weeks · <b>XL</b> = over a month</span></div>
     <div class="leg"><span class="lbl">Donation impact</span><span><span class="don-high">High</span> = directly grows or protects income / donor experience · <span class="don-med">Med</span> = supports it indirectly · <span class="don-low">Low</span> = internal efficiency only</span></div>
     <div class="leg"><span class="lbl">Priority</span><span><span class="badge p0">P0</span> (highest) → <span class="badge p3">P3</span> (lowest)</span></div>
+    <div class="leg"><span class="lbl">Reviewer picks</span><span><span class="pk">★</span> = one of the 10 tasks the reviewer liked</span></div>
     <div class="leg"><span class="lbl">Plain words</span><span>click <b>Explain</b> on any task to see what it means · click a main task row to open or collapse its group</span></div>
   </div>
 
@@ -208,6 +214,9 @@ let sort = {key:null, dir:1};            // dir: 1 asc, -1 desc; key null = file
 const filters = {text:'', p:new Set(), donation:new Set()};
 const closedGroups = new Set();          // group IDs currently folded (the page opens fully folded)
 const openDescs = new Set();             // subtask IDs with the explanation expanded
+
+/* The 10 tasks the reviewer liked in the earlier flat list (old JJ-01…JJ-10). */
+const PICKS = new Set(['JJ-01.1','JJ-01.2','JJ-02.1','JJ-02.2','JJ-03.1','JJ-03.2','JJ-03.3','JJ-03.4','JJ-04.1','JJ-04.2']);
 
 const $ = sel => document.querySelector(sel);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -300,8 +309,9 @@ function render(){
     if (g.handoff) html += '<tr class="ghand"><td></td><td colspan="4">Handoff: ' + esc(g.handoff) + '</td></tr>';
     for (const s of vis){
       const open = openDescs.has(s.id);
-      html += '<tr class="sub">' +
-        '<td class="mono">' + esc(s.id) + '</td>' +
+      const pick = PICKS.has(s.id);
+      html += '<tr class="sub' + (pick ? ' pick' : '') + '">' +
+        '<td class="mono">' + (pick ? '<span class="pk" title="One of the 10 tasks the reviewer liked">★</span>' : '') + esc(s.id) + '</td>' +
         '<td class="task">' + esc(s.task) + ' <button class="exp" type="button" data-s="' + esc(s.id) + '" aria-expanded="' + (open ? 'true' : 'false') + '" title="' + (open ? 'Hide the plain-words explanation' : 'Show this task in plain words') + '">' + (open ? 'Hide' : 'Explain') + '</button></td>' +
         '<td>' + esc(s.time) + '</td>' +
         '<td class="don-' + esc(s.donation.toLowerCase()) + '">' + esc(s.donation) + '</td>' +
