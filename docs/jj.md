@@ -1,6 +1,6 @@
 # JJ's Task List
 
-Task list for the Systems Builder role — 11 main tasks with 41 subtasks. Interactive view:
+Task list for the Systems Builder role — 10 main tasks with 36 subtasks. Interactive view:
 [`jj.html`](jj.html) — sort, filter, and expand any task for a plain-words explanation.
 
 ## Legend
@@ -172,22 +172,3 @@ In plain words:
 - **JJ-10.1** — Keep an audit trail of account removals and alert on dormant (unused) accounts.
 - **JJ-10.2** — A ready procedure to lock accounts fast when there's a compromise or a hostile departure.
 - **JJ-10.3** — Set up secure storage for sensitive personal data: hosting, encryption, access control.
-
-### JJ-11 · Social media publishing & enhancement
-Campaign and handover content turned into scheduled social posts — with tagged links so each channel's donations are traceable — instead of one-off manual posting.
-Handoff: in — campaign material from Marketing, videos and photos from MilOps · out — scheduled posts on every channel, and per-channel reach and donations in the dashboard.
-
-| ID | Subtask | Time | Donation impact | P |
-| --- | --- | --- | --- | --- |
-| JJ-11.1 | Channel + access inventory (platforms, brand accounts, publishing access) | S–M | Med | P1 |
-| JJ-11.2 | Publishing queue: schedule + cross-post with a marketing approval step | L | Med | P1 |
-| JJ-11.3 | Campaign launch kit: captions, per-channel formats, tagged links | M | High | P1 |
-| JJ-11.4 | Auto-clips + captions from existing request/handover videos | L | Med | P2 |
-| JJ-11.5 | Channel attribution: tagged links → donations in the dashboard | M | High | P1 |
-
-In plain words:
-- **JJ-11.1** — List every social platform and brand account in use, who controls each login, and what publishing access exists — so the pipeline is built on real access, not assumptions.
-- **JJ-11.2** — One queue where a post is written once, scheduled, and published to every channel — with a Marketing approval step before anything goes live.
-- **JJ-11.3** — Generate the per-campaign posting kit from the campaign brief: caption variants, correctly sized images, and campaign links tagged per channel.
-- **JJ-11.4** — Cut short vertical clips with captions from videos we already have (the same files as JJ-06), so existing footage becomes social content without manual editing.
-- **JJ-11.5** — Tag every campaign link per channel so the dashboard shows which platform actually brought donations — JJ-03.4 brings platform numbers in; this connects them to money.
