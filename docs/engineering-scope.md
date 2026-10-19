@@ -4,7 +4,7 @@ Status: role lens · Task list: [`jj.md`](jj.md) · Source: `../TASKS.md` (99 ta
 
 This is the engineering slice of the task backlog: what the AI Engineer / Software
 Engineer / Systems Builder owns, in what order, and with what interfaces. The numbered
-task list itself — 11 main tasks with 41 subtasks, carrying time, donation impact, and priority — lives in
+task list itself — 41 tasks, carrying time, donation impact, and priority — lives in
 [`jj.md`](jj.md); this document is the role lens on it. T-xx references belong to the
 organisation-wide backlog in `TASKS.md`.
 
@@ -13,7 +13,7 @@ organisation-wide backlog in `TASKS.md`.
 Own the data layer, the automations, and the Slack AI agent (Leleka). Build the systems the other pillars
 run on: integrations, pipelines, reconciliation, fulfillment automation.
 
-- **Build once, reuse:** the dashboard data layer (JJ-03) is also Leleka's data layer — never two integration stacks.
+- **Build once, reuse:** the dashboard data layer (JJ-05–JJ-08) is also Leleka's data layer — never two integration stacks.
 - **Protect the money routes first:** nothing that touches existing donor payments gets replaced without running old and new in parallel first.
 - **Exceptions are visible:** every automation keeps a manual path for unmatched/rejected cases.
 - **Sensitive data:** donor records in scope — self-hosted tooling preferred (see §6).
@@ -35,39 +35,39 @@ P1 = 16 Eng, P2 = 1 Eng, P3 = 3 Eng.
 
 | # | Track | Tasks | Est. | Why it matters |
 | --- | --- | --- | --- | --- |
-| 1 | Discovery | JJ-01.1, JJ-01.2, JJ-02.1, JJ-02.2 | 1–2 wk | Cheapest risk reduction; unlocks everything after |
-| 2 | Data layer → dashboard | JJ-03.1–JJ-03.4 | 5–8 wk | The manual's immediate deliverable; doubles as Leleka's layer |
-| 3 | Donation protection + fulfillment | JJ-04.1–JJ-04.3, JJ-05.1–JJ-05.6 | 8–12 wk | Protects ~€70k/mo recurring and automates the primary workflow |
-| 4 | Video pipeline | JJ-06.1 → JJ-06.2 → JJ-06.3 | 4–6 wk | Donor experience (primary automation target) |
-| 5 | Shipping automation | JJ-07.1 → JJ-07.2 → JJ-07.3 | 4–6 wk | Fulfillment economics; pick 4 or 5 first |
-| 6 | Leleka (Slack agent) | JJ-01.3, JJ-01.4, JJ-01.5 | 6–10 wk | Insights agent; gated on track 2's data layer |
-| 7 | Growth builds | JJ-08.1, JJ-08.2, JJ-08.3 | parallel | New crypto payment channels (not a priority for now) |
-| 8 | MilOps + ops tooling | JJ-09.1–JJ-09.4, JJ-10.1–JJ-10.3 | parallel | Utility builds and risk tooling |
-| 9 | Social publishing | JJ-11.1 → JJ-11.3 → JJ-11.2 → JJ-11.5 (JJ-11.4 optional) | parallel | Campaign reach without manual posting; per-channel donation attribution |
+| 1 | Discovery | JJ-01, JJ-02, JJ-03, JJ-04 | 1–2 wk | Cheapest risk reduction; unlocks everything after |
+| 2 | Data layer → dashboard | JJ-05–JJ-08 | 5–8 wk | The manual's immediate deliverable; doubles as Leleka's layer |
+| 3 | Donation protection + fulfillment | JJ-09–JJ-16, JJ-29 | 8–12 wk | Protects ~€70k/mo recurring and automates the primary workflow |
+| 4 | Video pipeline | JJ-17 → JJ-18 → JJ-19 | 4–6 wk | Donor experience (primary automation target) |
+| 5 | Shipping automation | JJ-20 → JJ-21 → JJ-22 | 4–6 wk | Fulfillment economics; pick 4 or 5 first |
+| 6 | Leleka (Slack agent) | JJ-23, JJ-24, JJ-25 | 6–10 wk | Insights agent; gated on track 2's data layer |
+| 7 | Growth builds | JJ-26, JJ-27, JJ-28 | parallel | New crypto payment channels (not a priority for now) |
+| 8 | MilOps + ops tooling | JJ-30–JJ-36 | parallel | Utility builds and risk tooling |
+| 9 | Social publishing | JJ-37 → JJ-39 → JJ-38 → JJ-41 (JJ-40 optional) | parallel | Campaign reach without manual posting; per-channel donation attribution |
 
 ## 4. First 90 days
 
-1. **Weeks 1–2 — decisions, not code.** JJ-01.1/JJ-01.2 (Leleka: use cases, platform choice),
-   JJ-02.1/JJ-02.2 (payment/goods flow map, TypeForm integrate-vs-eliminate). Outputs: short memos
+1. **Weeks 1–2 — decisions, not code.** JJ-01/JJ-02 (Leleka: use cases, platform choice),
+   JJ-03/JJ-04 (payment/goods flow map, TypeForm integrate-vs-eliminate). Outputs: short memos
    the team can act on.
-2. **Weeks 2–8 — data layer.** JJ-04.1 first (subscription reconciliation across donation accounts — the
-   direct revenue-protection win), then the dashboard (JJ-03.1–JJ-03.4). The weekly core-team review (T-10) starts
+2. **Weeks 2–8 — data layer.** JJ-09 first (subscription reconciliation across donation accounts — the
+   direct revenue-protection win), then the dashboard (JJ-05–JJ-08). The weekly core-team review (T-10) starts
    running on it with Ops.
-3. **Weeks 8–13 — automation.** JJ-04.2 → JJ-05.1/JJ-05.2 (matching → intake → eligibility), then
-   commit to one experience track: video (JJ-06) or shipping (JJ-07).
+3. **Weeks 8–13 — automation.** JJ-10 → JJ-11/JJ-12 (matching → intake → eligibility), then
+   commit to one experience track: video (JJ-17–JJ-19) or shipping (JJ-20–JJ-22).
 
 ## 5. Task list (Eng-owned + shared)
 
-See [`jj.md`](jj.md) — 11 main tasks with 41 subtasks, each with time, donation impact, and priority.
+See [`jj.md`](jj.md) — 41 tasks, each with time, donation impact, and priority.
 
 ## 6. Interfaces & constraints (manual §5.4)
 
 - Preserve the legacy subscription channel and all existing payment routes; no forced migration (T-20 guardrail).
 - Keep unit-intake forms and donor-fulfillment forms distinct.
 - Work through the website developer and the donation-platform account manager; specialist platform support via T-69.
-- Sensitive-data review before any Leleka/donor-data work (JJ-01.3) — self-hosted agent preferred (platform evaluation, JJ-01.2).
-- Reporting discipline: totals must trace to source reports; missing feeds flagged, refresh times visible (JJ-03.1 requirements).
-- Crypto stays separate from US tax-deductible reporting (JJ-03.3 note).
+- Sensitive-data review before any Leleka/donor-data work (JJ-23) — self-hosted agent preferred (platform evaluation, JJ-02).
+- Reporting discipline: totals must trace to source reports; missing feeds flagged, refresh times visible (JJ-05 requirements).
+- Crypto stays separate from US tax-deductible reporting (JJ-07 note).
 
 ## 7. Day-one access checklist
 

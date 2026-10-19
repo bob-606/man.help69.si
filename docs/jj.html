@@ -56,7 +56,6 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
   .chip[aria-pressed="true"]:hover{ background:var(--fg); border-color:var(--fg); }
   .count{ color:var(--muted); font-size:13px; }
   .countbar{ display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin:6px 2px 14px; }
-  .countbar #expand{ margin-left:auto; }
   button.switch{ display:inline-flex; align-items:center; gap:8px; border:0; background:transparent; padding:0; cursor:pointer; color:var(--muted); font:inherit; font-size:13px; }
   button.switch .track{ width:34px; height:18px; border-radius:999px; background:var(--chip); border:1px solid var(--ctrlbd); position:relative; transition:background .15s, border-color .15s; flex:none; }
   button.switch .thumb{ position:absolute; top:2px; left:2px; width:12px; height:12px; border-radius:50%; background:var(--muted); transition:left .15s, background .15s; }
@@ -91,11 +90,6 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
   td.empty{ text-align:center; color:var(--muted); padding:28px 10px; }
   td.empty .btn{ margin-left:10px; }
 
-  tr.grp td{ background:var(--chip); font-weight:600; cursor:pointer; padding:10px; user-select:none; -webkit-user-select:none; }
-  tr.grp:hover td{ background:var(--hover); }
-  .gm{ display:inline-block; width:15px; color:var(--muted); }
-  .gcount{ color:var(--muted); font-weight:400; font-size:12px; margin-left:8px; }
-  tr.gdesc td{ color:var(--muted); font-size:13px; }
   button.exp{ border:1px solid var(--ctrlbd); border-radius:999px; padding:2px 10px; font:inherit; font-size:12px; font-weight:500; line-height:1.2; color:var(--fg); background:var(--chip); cursor:pointer; margin-left:8px; vertical-align:middle; white-space:nowrap; transition:background-color .12s ease, border-color .12s ease, color .12s ease; }
   button.exp:hover{ border-color:var(--muted); background:var(--ctrlhbg); }
   button.exp[aria-expanded="true"]{ background:var(--fg); border-color:var(--fg); color:var(--bg); }
@@ -103,10 +97,8 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
   .btn-reset{ font-weight:600; border-color:var(--muted); }
   .btn:focus-visible, .chip:focus-visible, button.exp:focus-visible, button.switch:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   th.sortable:focus-visible{ outline:2px solid var(--accent); outline-offset:-2px; }
-  tr.grp:focus-visible{ outline:2px solid var(--accent); outline-offset:-2px; }
-  tr.grp:focus-visible td{ background:var(--hover); }
-  tr.sdesc td{ color:var(--muted); font-size:13px; }
-  tr.ghand td{ color:var(--muted); font-size:13px; }
+  tr.task-row:target td{ background:var(--chip); }
+  tr.desc-row td{ color:var(--muted); font-size:13px; }
 
   /* Phones: one stacked card per task — id + task, then time / donation / priority. */
   @media screen and (max-width:720px){
@@ -115,22 +107,19 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
     #tbl td{ border:0; }
     #tbl tbody tr{ border-bottom:1px solid var(--border); }
     #tbl tbody tr:last-child{ border-bottom:0; }
-    #tbl tr.grp td{ background:var(--chip); padding:9px 14px; }
-    #tbl tr.grp:hover td{ background:var(--hover); }
-    #tbl tr.gdesc td, #tbl tr.ghand td, #tbl tr.sdesc td{ padding:4px 14px 4px 26px; }
-    #tbl tr.gdesc td:empty, #tbl tr.ghand td:empty, #tbl tr.sdesc td:empty{ display:none; }
-    #tbl tr.sub{ position:relative; padding:10px 14px 11px; }
-    #tbl tr.sub td{ display:inline; padding:0; }
-    #tbl tr.sub td.mono{ color:var(--muted); margin-right:8px; }
-    #tbl tr.sub td:nth-child(3)::before{ content:""; display:block; }   /* the meta line starts here */
-    #tbl tr.sub td:nth-child(3){ color:var(--muted); }
-    #tbl tr.sub td:nth-child(4)::before, #tbl tr.sub td:nth-child(5)::before{ content:" · "; color:var(--muted); }
-    #tbl tr.sub button.exp{ position:absolute; right:14px; bottom:10px; margin:0; }
-    #tbl .gcount{ white-space:nowrap; }
+    #tbl tr.desc-row td{ padding:4px 14px 10px 26px; }
+    #tbl tr.desc-row td:empty{ display:none; }
+    #tbl tr.task-row{ position:relative; padding:10px 14px 11px; }
+    #tbl tr.task-row td{ display:inline; padding:0; }
+    #tbl tr.task-row td.mono{ color:var(--muted); margin-right:8px; }
+    #tbl tr.task-row td:nth-child(3)::before{ content:""; display:block; }   /* the meta line starts here */
+    #tbl tr.task-row td:nth-child(3){ color:var(--muted); }
+    #tbl tr.task-row td:nth-child(4)::before, #tbl tr.task-row td:nth-child(5)::before{ content:" · "; color:var(--muted); }
+    #tbl tr.task-row button.exp{ position:absolute; right:14px; bottom:10px; margin:0; }
     #tbl td.empty{ padding:24px 14px; }
   }
 
-  /* Print: the JS unfolds everything first; keep the header static on paper. */
+  /* Print: the JS opens every explanation first; keep the header static on paper. */
   @media print{
     thead th{ position:static; }
   }
@@ -149,7 +138,7 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
     <div class="leg"><span class="lbl">Time</span><span><b>S</b> = under a day · <b>M</b> = 1–5 days · <b>L</b> = 1–3 weeks · <b>XL</b> = over a month</span></div>
     <div class="leg"><span class="lbl">Donation impact</span><span><span class="don-high">High</span> = directly grows or protects income / donor experience · <span class="don-med">Med</span> = supports it indirectly · <span class="don-low">Low</span> = internal efficiency only</span></div>
     <div class="leg"><span class="lbl">Priority</span><span><span class="badge p0">P0</span> (highest) → <span class="badge p3">P3</span> (lowest)</span></div>
-    <div class="leg"><span class="lbl">Plain words</span><span>click <b>Explain</b> on any task to see what it means · click a main task row to open or collapse its group</span></div>
+    <div class="leg"><span class="lbl">Plain words</span><span>click <b>Explain</b> on any task to see what it means</span></div>
   </div>
 
   <div class="controls">
@@ -172,10 +161,6 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
 
   <div class="countbar">
     <div class="count" id="count"></div>
-    <button class="switch" id="expand" type="button" role="switch" aria-checked="false" title="Expand or collapse every group and explanation">
-      <span class="track"><span class="thumb"></span></span>
-      <span class="swlabel">Expand all</span>
-    </button>
   </div>
 
   <div class="tablewrap">
@@ -195,42 +180,33 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
 </div>
 
 <script>
-/* Embedded snapshot of docs/jj.md (16.OCT.2026) — used when jj.md is not reachable
+/* Embedded snapshot of docs/jj.md (19.OCT.2026) — used when jj.md is not reachable
    (e.g. single-file deploy on another domain). If jj.md is present next to this page,
    the live data replaces the snapshot automatically. Regenerated from jj.md. */
-const EMBEDDED = [{"id":"JJ-01","name":"Leleka (Slack AI agent)","desc":"A Slack assistant that answers operational questions from our data. Evaluated and data-safety checked first; built on the dashboard's data layer; the current Zapier bot is retired only if the agent covers its jobs.","handoff":"in — data questions from every team · out — answers in Slack.","subs":[{"id":"JJ-01.1","task":"Use-case catalogue + data-source inventory","time":"S–M","donation":"Med","p":"P0","desc":"Collect what people actually want to ask the agent, and check which of that data already exists — so the build targets real questions."},{"id":"JJ-01.2","task":"Platform evaluation — Hermes Agent vs alternatives","time":"M","donation":"Med","p":"P0","desc":"Choose the platform to build on (Hermes Agent vs alternatives), including how it connects to Slack and what today's Zapier bot cannot do."},{"id":"JJ-01.3","task":"Data access, permissions, sensitive-data review","time":"M","donation":"Med","p":"P0","desc":"Decide exactly what data the agent may read and under which privacy rules, before anything is built."},{"id":"JJ-01.4","task":"Build the agent on the reconciled data layer","time":"L–XL","donation":"Med","p":"P1","desc":"Build the agent on the same data as the dashboard (JJ-03) — one shared pipeline, not two."},{"id":"JJ-01.5","task":"Zapier bot overlap review (retire only if covered)","time":"S–M","donation":"Low","p":"P1","desc":"Run the agent and the current bot side by side; retire the bot only once the agent covers all its use cases."}]},{"id":"JJ-02","name":"Flow mapping & tool decisions","desc":"Short discovery first: map how money and products move today, and settle what happens to TypeForm — before any automation is built.","handoff":"in — process knowledge from DonorOps, MilOps and the website developer · out — the flow map and the TypeForm decision for every later build.","subs":[{"id":"JJ-02.1","task":"Map the payment + goods-receipt flow","time":"S–M","donation":"High","p":"P0","desc":"Draw today's path from a payment to a delivered product, including every tool and handoff in between (TypeForm, donation platform, postal)."},{"id":"JJ-02.2","task":"TypeForm decision: integrate vs eliminate","time":"S","donation":"High","p":"P0","desc":"Decide whether TypeForm stays (plugged into the new flow) or is dropped."}]},{"id":"JJ-03","name":"Reporting dashboard & data layer","desc":"One shared dashboard fed from every money and reach source — and the same reconciled data layer later feeds the Slack agent.","handoff":"in — donation-platform, bank, crypto, analytics and social feeds · out — the weekly dashboard the core team reviews.","subs":[{"id":"JJ-03.1","task":"Build the shared reporting dashboard","time":"L","donation":"High","p":"P0","desc":"One place for reporting: a single reporting period, clear currency rules, payment account and payment method kept apart, refresh times shown, missing data flagged."},{"id":"JJ-03.2","task":"Donation-account feeds into the dashboard","time":"M","donation":"High","p":"P0","desc":"Feed campaign receipts, totals and one-time vs recurring splits from the donation accounts into the dashboard."},{"id":"JJ-03.3","task":"Bank + crypto records into the reconciliation view","time":"M","donation":"Med","p":"P0","desc":"Add bank and crypto records so every incoming payment shows up in the reconciliation view."},{"id":"JJ-03.4","task":"Web analytics + social feeds into the dashboard","time":"M","donation":"Med","p":"P0","desc":"Add website traffic and social media numbers to the dashboard."}]},{"id":"JJ-04","name":"Payment matching & recurring-donation protection","desc":"Every incoming payment matched to its donor — and the ~€70k/month recurring base kept from slipping away unnoticed.","handoff":"in — payment records and donor records · out — verified matches for the dashboard and fulfillment, and early alerts for DonorOps.","subs":[{"id":"JJ-04.1","task":"Subscription reconciliation across donation accounts (protects ~700 donors / ~€70k per month)","time":"M","donation":"High","p":"P0","desc":"~700 recurring donors (~€70,000/month) sit on the legacy account; this flags any failed or dropped recurring payments early."},{"id":"JJ-04.2","task":"Automated payment matching to donor, campaign and account","time":"L","donation":"High","p":"P0","desc":"Match each payment to the right donor, campaign and donation account automatically — no manual lookups."},{"id":"JJ-04.3","task":"Replace donation-proof screenshots with reliable payment matching","time":"M–L","donation":"Med","p":"P1","desc":"Retire the practice of donors sending payment screenshots — reliable matching (JJ-04.2) becomes the proof."}]},{"id":"JJ-05","name":"Donor fulfillment automation","desc":"The core donor workflow: requests in, benefit rules applied, records generated — plus the lists and profiles around it. Ends with the end-to-end streamlined flow.","handoff":"in — donors' benefit choices · out — fulfillment records for MilOps packing and shipping.","subs":[{"id":"JJ-05.1","task":"Automated benefit-request intake","time":"L","donation":"High","p":"P0","desc":"Reuse saved donor details, capture what they choose, and generate the fulfillment record automatically."},{"id":"JJ-05.2","task":"Eligibility rule engine","time":"M–L","donation":"High","p":"P0","desc":"Apply the benefit rules automatically: 3-patch limit per shipment, €750+ bonus patch, vehicle messages from €1,500 (max 4 per vehicle), recurring tiers."},{"id":"JJ-05.3","task":"Reusable, editable donor shipping profile","time":"L","donation":"Med","p":"P1","desc":"One saved shipping profile per donor that they can edit and every fulfillment reuses."},{"id":"JJ-05.4","task":"Selection catalogue update on campaign completion","time":"S–M","donation":"Med","p":"P1","desc":"Update the selection catalogue as soon as a campaign finishes."},{"id":"JJ-05.5","task":"Recognition list sync (website + video channel)","time":"M","donation":"Med","p":"P1","desc":"Keep the website and video-channel recognition lists in sync with active donors."},{"id":"JJ-05.6","task":"Streamlined donation → benefits → payment → product flow","time":"L","donation":"High","p":"P0","desc":"Wire everything above into one smooth path: donation → benefit selection → payment → product (depends on JJ-04.3, JJ-05.1, JJ-05.2)."}]},{"id":"JJ-06","name":"Video pipeline","desc":"From uploaded handover video to the donor's inbox: matched to donor and vehicle, sent for subtitles, delivered by email.","handoff":"in — raw handover videos from MilOps · out — subtitled videos emailed to donors.","subs":[{"id":"JJ-06.1","task":"Auto-link handover video to vehicle/message/donor","time":"L","donation":"High","p":"P1","desc":"Match every uploaded handover video to its vehicle, its message and its donor automatically."},{"id":"JJ-06.2","task":"Auto-route uploads to subtitle contributors; hold unlinked files for coordination","time":"M","donation":"High","p":"P1","desc":"Handover videos must reach subtitle contributors before they go to donors — today that hand-off is manual. This task routes each upload to the right contributor automatically, and holds back any file that can't be matched to its vehicle/message/donor."},{"id":"JJ-06.3","task":"Auto-send donor email after subtitles","time":"M","donation":"High","p":"P1","desc":"Email the donor the correct subtitled video, with duplicate protection and a retry path if sending fails."}]},{"id":"JJ-07","name":"Shipping & packing automation","desc":"Packing documents and readiness checks straight from the system, so batches ship correctly.","handoff":"in — fulfillment records and stock status from MilOps · out — packing lists and postal files for the shipping team.","subs":[{"id":"JJ-07.1","task":"Packing list + postal CSV generation (worldwide + US)","time":"L","donation":"Med","p":"P1","desc":"Generate the packing list and postal export files (worldwide and US formats) for each batch."},{"id":"JJ-07.2","task":"Stock-readiness gating","time":"M","donation":"Med","p":"P1","desc":"Hold a campaign batch until its patches are actually in stock."},{"id":"JJ-07.3","task":"Flag unit-patch bonus vs 3-patch limit overlaps","time":"S–M","donation":"Low","p":"P1","desc":"Flag cases where the unit-patch bonus conflicts with the 3-patch limit, for the shipping team to review."}]},{"id":"JJ-08","name":"Crypto donations (BTCPay)","desc":"A self-hosted crypto donation route: server, invoices, wallet connection — not a priority for now.","handoff":"in — donor crypto payments · out — crypto records in reporting, kept separate from US tax receipts.","subs":[{"id":"JJ-08.1","task":"BTCPay Server deployment (hosting, wallets, security)","time":"M","donation":"High","p":"P3","desc":"Set up the self-hosted BTCPay server: hosting, wallets, security."},{"id":"JJ-08.2","task":"BTCPay crypto invoices in the donation flow + campaign pages","time":"M","donation":"High","p":"P3","desc":"Wire BTCPay's crypto invoices into the normal donation flow and the campaign pages."},{"id":"JJ-08.3","task":"WalletConnect integration","time":"M","donation":"High","p":"P3","desc":"Let donors connect a wallet to give via the crypto route."}]},{"id":"JJ-09","name":"MilOps document & intake tooling","desc":"Automating the internal paperwork for units, vehicles and intake.","handoff":"in — vehicle and unit documents plus application videos from MilOps · out — structured records in the CRM for MilOps.","subs":[{"id":"JJ-09.1","task":"Vehicle-document extraction (VIN, year, make, model)","time":"L","donation":"Low","p":"P0","desc":"Read VIN, year, make and model off vehicle-document images automatically."},{"id":"JJ-09.2","task":"Unit-document generation at convoy assignment","time":"L","donation":"Med","p":"P0","desc":"Generate unit documents from templates at convoy assignment."},{"id":"JJ-09.3","task":"Request-video intake into the CRM workflow","time":"M","donation":"Med","p":"P0","desc":"Enter request videos straight into the CRM workflow."},{"id":"JJ-09.4","task":"Unit-application invite-code rotation","time":"S–M","donation":"Low","p":"P0","desc":"Automate the monthly rotation of the unit-application invite code."}]},{"id":"JJ-10","name":"Access control & security","desc":"Who can access what, what happens when someone leaves — and what to do in an emergency.","handoff":"in — staff changes from Ops · out — audited accounts and a ready emergency-lockout procedure for Ops.","subs":[{"id":"JJ-10.1","task":"Deprovisioning audit trail + dormant-account alerts","time":"M","donation":"Med","p":"P0","desc":"Keep an audit trail of account removals and alert on dormant (unused) accounts."},{"id":"JJ-10.2","task":"Emergency lockout procedure","time":"S–M","donation":"Med","p":"P0","desc":"A ready procedure to lock accounts fast when there's a compromise or a hostile departure."},{"id":"JJ-10.3","task":"Secure database infrastructure for sensitive personal data","time":"L","donation":"Med","p":"P0","desc":"Set up secure storage for sensitive personal data: hosting, encryption, access control."}]},{"id":"JJ-11","name":"Social media publishing & enhancement","desc":"Campaign and handover content turned into scheduled social posts — with tagged links so each channel's donations are traceable — instead of one-off manual posting.","handoff":"in — campaign material from Marketing, videos and photos from MilOps · out — scheduled posts on every channel, and per-channel reach and donations in the dashboard.","subs":[{"id":"JJ-11.1","task":"Channel + access inventory (platforms, brand accounts, publishing access)","time":"S–M","donation":"Med","p":"P1","desc":"List every social platform and brand account in use, who controls each login, and what publishing access exists — so the pipeline is built on real access, not assumptions."},{"id":"JJ-11.2","task":"Publishing queue: schedule + cross-post with a marketing approval step","time":"L","donation":"Med","p":"P1","desc":"One queue where a post is written once, scheduled, and published to every channel — with a Marketing approval step before anything goes live."},{"id":"JJ-11.3","task":"Campaign launch kit: captions, per-channel formats, tagged links","time":"M","donation":"High","p":"P1","desc":"Generate the per-campaign posting kit from the campaign brief: caption variants, correctly sized images, and campaign links tagged per channel."},{"id":"JJ-11.4","task":"Auto-clips + captions from existing request/handover videos","time":"L","donation":"Med","p":"P2","desc":"Cut short vertical clips with captions from videos we already have (the same files as JJ-06), so existing footage becomes social content without manual editing."},{"id":"JJ-11.5","task":"Channel attribution: tagged links → donations in the dashboard","time":"M","donation":"High","p":"P1","desc":"Tag every campaign link per channel so the dashboard shows which platform actually brought donations — JJ-03.4 brings platform numbers in; this connects them to money."}]}];
+const EMBEDDED = [{"id":"JJ-01","task":"Leleka (Slack AI agent): use-case catalogue + data-source inventory","time":"S–M","donation":"Med","p":"P0","desc":"Collect what people actually want to ask the agent, and check which of that data already exists — so the build targets real questions."},{"id":"JJ-02","task":"Leleka (Slack AI agent): platform evaluation — Hermes Agent vs alternatives","time":"M","donation":"Med","p":"P0","desc":"Choose the platform to build on (Hermes Agent vs alternatives), including how it connects to Slack and what today's Zapier bot cannot do."},{"id":"JJ-03","task":"Map the current payment + goods-receipt flow","time":"S–M","donation":"High","p":"P0","desc":"Draw today's path from a payment to a delivered product, including every tool and handoff in between (TypeForm, donation platform, postal)."},{"id":"JJ-04","task":"TypeForm decision: integrate vs eliminate","time":"S","donation":"High","p":"P0","desc":"Decide whether TypeForm stays (plugged into the new flow) or is dropped."},{"id":"JJ-05","task":"Build the shared reporting dashboard","time":"L","donation":"High","p":"P0","desc":"One place for reporting: a single reporting period, clear currency rules, payment account and payment method kept apart, refresh times shown, missing data flagged."},{"id":"JJ-06","task":"Donation-account feeds into the dashboard","time":"M","donation":"High","p":"P0","desc":"Feed campaign receipts, totals and one-time vs recurring splits from the donation accounts into the dashboard."},{"id":"JJ-07","task":"Bank + crypto records into the reconciliation view","time":"M","donation":"Med","p":"P0","desc":"Add bank and crypto records so every incoming payment shows up in the reconciliation view."},{"id":"JJ-08","task":"Web analytics + social feeds into the dashboard","time":"M","donation":"Med","p":"P0","desc":"Add website traffic and social media numbers to the dashboard."},{"id":"JJ-09","task":"Subscription reconciliation across donation accounts (protects ~700 donors / ~€70k per month)","time":"M","donation":"High","p":"P0","desc":"~700 recurring donors (~€70,000/month) sit on the legacy account; this flags any failed or dropped recurring payments early."},{"id":"JJ-10","task":"Automated payment matching to donor, campaign and account","time":"L","donation":"High","p":"P0","desc":"Match each payment to the right donor, campaign and donation account automatically — no manual lookups."},{"id":"JJ-11","task":"Automated benefit-request intake","time":"L","donation":"High","p":"P0","desc":"Reuse saved donor details, capture what they choose, and generate the fulfillment record automatically."},{"id":"JJ-12","task":"Eligibility rule engine","time":"M–L","donation":"High","p":"P0","desc":"Apply the benefit rules automatically: 3-patch limit per shipment, €750+ bonus patch, vehicle messages from €1,500 (max 4 per vehicle), recurring tiers."},{"id":"JJ-13","task":"Replace donation-proof screenshots with reliable payment matching","time":"M–L","donation":"Med","p":"P1","desc":"Retire the practice of donors sending payment screenshots — reliable matching (JJ-10) becomes the proof."},{"id":"JJ-14","task":"Reusable, editable donor shipping profile","time":"L","donation":"Med","p":"P1","desc":"One saved shipping profile per donor that they can edit and every fulfillment reuses."},{"id":"JJ-15","task":"Selection catalogue update on campaign completion","time":"S–M","donation":"Med","p":"P1","desc":"Update the selection catalogue as soon as a campaign finishes."},{"id":"JJ-16","task":"Recognition list sync (website + video channel)","time":"M","donation":"Med","p":"P1","desc":"Keep the website and video-channel recognition lists in sync with active donors."},{"id":"JJ-17","task":"Auto-link handover video to vehicle/message/donor","time":"L","donation":"High","p":"P1","desc":"Match every uploaded handover video to its vehicle, its message and its donor automatically."},{"id":"JJ-18","task":"Auto-route uploads to subtitle contributors; hold unlinked files","time":"M","donation":"High","p":"P1","desc":"Route each upload to the right subtitle contributor automatically, and hold back any file that can't be matched to its vehicle/message/donor."},{"id":"JJ-19","task":"Auto-send donor email after subtitles","time":"M","donation":"High","p":"P1","desc":"Email the donor the correct subtitled video, with duplicate protection and a retry path if sending fails."},{"id":"JJ-20","task":"Packing list + postal CSV generation (worldwide + US)","time":"L","donation":"Med","p":"P1","desc":"Generate the packing list and postal export files (worldwide and US formats) for each batch."},{"id":"JJ-21","task":"Stock-readiness gating","time":"M","donation":"Med","p":"P1","desc":"Hold a campaign batch until its patches are actually in stock."},{"id":"JJ-22","task":"Flag unit-patch bonus vs 3-patch limit overlaps","time":"S–M","donation":"Low","p":"P1","desc":"Flag cases where the unit-patch bonus conflicts with the 3-patch limit, for the shipping team to review."},{"id":"JJ-23","task":"Leleka (Slack AI agent): data access, permissions, sensitive-data review","time":"M","donation":"Med","p":"P0","desc":"Decide exactly what data the agent may read and under which privacy rules, before anything is built."},{"id":"JJ-24","task":"Leleka (Slack AI agent): build the agent on the reconciled data layer","time":"L–XL","donation":"Med","p":"P1","desc":"Build the agent on the same data as the dashboard (JJ-05) — one shared pipeline, not two."},{"id":"JJ-25","task":"Leleka (Slack AI agent): Zapier bot overlap review","time":"S–M","donation":"Low","p":"P1","desc":"Run the agent and the current bot side by side; retire the bot only once the agent covers all its use cases."},{"id":"JJ-26","task":"BTCPay Server deployment (hosting, wallets, security)","time":"M","donation":"High","p":"P3","desc":"Set up the self-hosted BTCPay server: hosting, wallets, security."},{"id":"JJ-27","task":"BTCPay crypto invoices in the donation flow + campaign pages","time":"M","donation":"High","p":"P3","desc":"Wire BTCPay's crypto invoices into the normal donation flow and the campaign pages."},{"id":"JJ-28","task":"WalletConnect integration","time":"M","donation":"High","p":"P3","desc":"Let donors connect a wallet to give via the crypto route."},{"id":"JJ-29","task":"Streamlined donation → benefits → payment → product flow","time":"L","donation":"High","p":"P0","desc":"Wire the intake, eligibility and payment-matching work into one smooth path: donation → benefit selection → payment → product (depends on JJ-11, JJ-12, JJ-13)."},{"id":"JJ-30","task":"Vehicle-document extraction (VIN, year, make, model)","time":"L","donation":"Low","p":"P0","desc":"Read VIN, year, make and model off vehicle-document images automatically."},{"id":"JJ-31","task":"Unit-document generation at convoy assignment","time":"L","donation":"Med","p":"P0","desc":"Generate unit documents from templates at convoy assignment."},{"id":"JJ-32","task":"Request-video intake into the CRM workflow","time":"M","donation":"Med","p":"P0","desc":"Enter request videos straight into the CRM workflow."},{"id":"JJ-33","task":"Unit-application invite-code rotation","time":"S–M","donation":"Low","p":"P0","desc":"Automate the monthly rotation of the unit-application invite code."},{"id":"JJ-34","task":"Deprovisioning audit trail + dormant-account alerts","time":"M","donation":"Med","p":"P0","desc":"Keep an audit trail of account removals and alert on dormant (unused) accounts."},{"id":"JJ-35","task":"Emergency lockout procedure","time":"S–M","donation":"Med","p":"P0","desc":"A ready procedure to lock accounts fast when there's a compromise or a hostile departure."},{"id":"JJ-36","task":"Secure database infrastructure for sensitive personal data","time":"L","donation":"Med","p":"P0","desc":"Set up secure storage for sensitive personal data: hosting, encryption, access control."},{"id":"JJ-37","task":"Social media: channel + access inventory (platforms, brand accounts, publishing access)","time":"S–M","donation":"Med","p":"P1","desc":"List every social platform and brand account in use, who controls each login, and what publishing access exists — so the pipeline is built on real access, not assumptions."},{"id":"JJ-38","task":"Social media: publishing queue — schedule + cross-post with a marketing approval step","time":"L","donation":"Med","p":"P1","desc":"One queue where a post is written once, scheduled, and published to every channel — with a Marketing approval step before anything goes live."},{"id":"JJ-39","task":"Social media: campaign launch kit — captions, per-channel formats, tagged links","time":"M","donation":"High","p":"P1","desc":"Generate the per-campaign posting kit from the campaign brief: caption variants, correctly sized images, and campaign links tagged per channel."},{"id":"JJ-40","task":"Social media: auto-clips + captions from existing request/handover videos","time":"L","donation":"Med","p":"P2","desc":"Cut short vertical clips with captions from videos we already have (the video pipeline, JJ-17–JJ-19), so existing footage becomes social content without manual editing."},{"id":"JJ-41","task":"Social media: channel attribution — tagged links → donations in the dashboard","time":"M","donation":"High","p":"P1","desc":"Tag every campaign link per channel so the dashboard shows which platform actually brought donations — JJ-08 brings platform numbers in; this connects them to money."}];
 const TIME_RANK = {'S':1,'S–M':1.5,'M':2,'M–L':2.5,'L':3,'L–XL':3.5,'XL':4};
 const DON_RANK = {High:1, Med:2, Low:3};
 const P_RANK = {P0:0, P1:1, P2:2, P3:3};
 
-let groups = [];
+let tasks = [];
 let sort = {key:null, dir:1};            // dir: 1 asc, -1 desc; key null = file order
 const filters = {text:'', p:new Set(), donation:new Set()};
-const closedGroups = new Set();          // group IDs currently folded (the page opens fully folded)
-const openDescs = new Set();             // subtask IDs with the explanation expanded
+const openDescs = new Set();             // task IDs with the explanation expanded
 
 const $ = sel => document.querySelector(sel);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 function parseMd(text){
-  const out = [], descs = {}; let cur = null, mode = 0;
+  const out = [], descs = {};
   for (const raw of text.split('\n')){
     const line = raw.trim(); let m;
-    if ((m = line.match(/^###\s+(JJ-\d+)\s*·\s*(.+?)\s*$/))){
-      cur = {id:m[1], name:m[2], desc:'', handoff:'', subs:[]}; out.push(cur); mode = 1; continue;
+    if ((m = line.match(/^\|\s*(JJ-\d+)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|$/))){
+      out.push({id:m[1], task:m[2], time:m[3], donation:m[4], p:m[5], desc:''});
+      continue;
     }
-    if (!cur) continue;
-    if ((m = line.match(/^\|\s*(JJ-\d+\.\d+)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|$/))){
-      cur.subs.push({id:m[1], task:m[2], time:m[3], donation:m[4], p:m[5], desc:''}); mode = 2; continue;
-    }
-    if (line.startsWith('|')) continue;
-    if ((m = line.match(/^-\s+\*\*(JJ-\d+\.\d+)\*\*\s*—\s*(.+)$/))){ descs[m[1]] = m[2]; continue; }
-    if (mode === 1 && line){
-      if ((m = line.match(/^Handoff:\s*(.+)$/))){ cur.handoff = m[1]; continue; }
-      cur.desc = cur.desc ? cur.desc + ' ' + line : line;
-    }
+    if ((m = line.match(/^-\s+\*\*(JJ-\d+)\*\*\s*—\s*(.+)$/))) descs[m[1]] = m[2];
   }
-  for (const g of out) for (const s of g.subs) s.desc = descs[s.id] || '';
+  for (const s of out) s.desc = descs[s.id] || '';
   return out;
 }
 
@@ -238,10 +214,7 @@ function cmp(a, b){
   const k = sort.key;
   if (!k) return 0;
   let r = 0;
-  if (k === 'id'){
-    const A = a.id.slice(3).split('.').map(Number), B = b.id.slice(3).split('.').map(Number);
-    r = (A[0] - B[0]) || ((A[1] || 0) - (B[1] || 0));
-  }
+  if (k === 'id') r = Number(a.id.slice(3)) - Number(b.id.slice(3));
   else if (k === 'time') r = (TIME_RANK[a.time] ?? 99) - (TIME_RANK[b.time] ?? 99);
   else if (k === 'donation') r = (DON_RANK[a.donation] ?? 0) - (DON_RANK[b.donation] ?? 0);
   else if (k === 'p') r = (P_RANK[a.p] ?? 9) - (P_RANK[b.p] ?? 9);
@@ -259,23 +232,7 @@ function passes(s){
   return true;
 }
 
-function allExpanded(){
-  return groups.every(g => !closedGroups.has(g.id) && g.subs.every(s => openDescs.has(s.id)));
-}
-
-/* The page's default view: every group folded, no explanations open. */
-function foldAll(){
-  closedGroups.clear(); openDescs.clear();
-  for (const g of groups) closedGroups.add(g.id);
-}
-
-/* Toggle one group / one explanation; keep keyboard focus on the same spot. */
-function toggleGroup(id){
-  if (closedGroups.has(id)) closedGroups.delete(id); else closedGroups.add(id);
-  render();
-  const row = document.querySelector('tr.grp[data-g="' + id + '"]');
-  if (row) row.focus({preventScroll:true});
-}
+/* Toggle one explanation; keep keyboard focus on the same spot. */
 function toggleDesc(id){
   if (openDescs.has(id)) openDescs.delete(id); else openDescs.add(id);
   render();
@@ -285,42 +242,28 @@ function toggleDesc(id){
 
 function render(){
   const tbody = $('#tbl tbody');
-  let html = '', shown = 0, total = 0, gshown = 0;
-  for (const g of groups){
-    total += g.subs.length;
-    const vis = g.subs.filter(passes).sort(cmp);
-    if (!vis.length) continue;
-    shown += vis.length; gshown++;
-    const closed = closedGroups.has(g.id);
-    const countTxt = vis.length < g.subs.length ? vis.length + ' of ' + g.subs.length + ' subtasks' : vis.length + ' subtasks';
-    html += '<tr class="grp" data-g="' + esc(g.id) + '" tabindex="0" aria-expanded="' + (closed ? 'false' : 'true') + '">' +
-      '<td colspan="5"><span class="gm">' + (closed ? '▸' : '▾') + '</span><b>' + esc(g.id) + '</b> · ' + esc(g.name) + '<span class="gcount">' + countTxt + '</span></td></tr>';
-    if (closed) continue;
-    if (g.desc) html += '<tr class="gdesc"><td></td><td colspan="4">' + esc(g.desc) + '</td></tr>';
-    if (g.handoff) html += '<tr class="ghand"><td></td><td colspan="4">Handoff: ' + esc(g.handoff) + '</td></tr>';
-    for (const s of vis){
-      const open = openDescs.has(s.id);
-      html += '<tr class="sub">' +
-        '<td class="mono">' + esc(s.id) + '</td>' +
-        '<td class="task">' + esc(s.task) + ' <button class="exp" type="button" data-s="' + esc(s.id) + '" aria-expanded="' + (open ? 'true' : 'false') + '" title="' + (open ? 'Hide the plain-words explanation' : 'Show this task in plain words') + '">' + (open ? 'Hide' : 'Explain') + '</button></td>' +
-        '<td>' + esc(s.time) + '</td>' +
-        '<td class="don-' + esc(s.donation.toLowerCase()) + '">' + esc(s.donation) + '</td>' +
-        '<td><span class="badge ' + esc(s.p.toLowerCase()) + '">' + esc(s.p) + '</span></td>' +
-        '</tr>';
-      if (open && s.desc) html += '<tr class="sdesc"><td></td><td colspan="4">' + esc(s.desc) + '</td></tr>';
-    }
+  const rows = tasks.filter(passes).sort(cmp);
+  let html = '';
+  for (const s of rows){
+    const open = openDescs.has(s.id);
+    html += '<tr class="task-row" id="' + esc(s.id.toLowerCase()) + '">' +
+      '<td class="mono">' + esc(s.id) + '</td>' +
+      '<td class="task">' + esc(s.task) + ' <button class="exp" type="button" data-s="' + esc(s.id) + '" aria-expanded="' + (open ? 'true' : 'false') + '" title="' + (open ? 'Hide the plain-words explanation' : 'Show this task in plain words') + '">' + (open ? 'Hide' : 'Explain') + '</button></td>' +
+      '<td>' + esc(s.time) + '</td>' +
+      '<td class="don-' + esc(s.donation.toLowerCase()) + '">' + esc(s.donation) + '</td>' +
+      '<td><span class="badge ' + esc(s.p.toLowerCase()) + '">' + esc(s.p) + '</span></td>' +
+      '</tr>';
+    if (open && s.desc) html += '<tr class="desc-row"><td></td><td colspan="4">' + esc(s.desc) + '</td></tr>';
   }
   tbody.innerHTML = html || '<tr><td class="empty" colspan="5">No tasks match the current filters. <button class="btn" id="clearf" type="button">Clear filters</button></td></tr>';
   $('#count').textContent =
-    (shown === total ? total : shown + ' of ' + total) + ' subtasks · ' +
-    (gshown === groups.length ? groups.length : gshown + ' of ' + groups.length) + ' main tasks';
+    (rows.length === tasks.length ? tasks.length : rows.length + ' of ' + tasks.length) + ' tasks';
   document.querySelectorAll('th.sortable').forEach(th => {
     const active = th.dataset.key === sort.key;
     th.dataset.active = active ? 'true' : 'false';
     th.setAttribute('aria-sort', active ? (sort.dir === 1 ? 'ascending' : 'descending') : 'none');
     th.querySelector('.arrow').textContent = active ? (sort.dir === 1 ? '▲' : '▼') : '↕';
   });
-  $('#expand').setAttribute('aria-checked', allExpanded() ? 'true' : 'false');
 }
 
 /* Theme: follows the OS until the user picks a side; then light ↔ dark. */
@@ -341,19 +284,9 @@ media.addEventListener('change', themeLabel);
 themeLabel();
 
 $('#tbl tbody').addEventListener('click', e => {
-  const grp = e.target.closest('tr.grp');
-  if (grp){ toggleGroup(grp.dataset.g); return; }
   const btn = e.target.closest('button.exp');
   if (btn){ toggleDesc(btn.dataset.s); return; }
   if (e.target.closest('#clearf')){ clearFilters(); render(); }
-});
-
-$('#tbl tbody').addEventListener('keydown', e => {
-  if (e.key !== 'Enter' && e.key !== ' ') return;
-  const grp = e.target.closest('tr.grp');
-  if (!grp) return;
-  e.preventDefault();
-  toggleGroup(grp.dataset.g);
 });
 
 document.querySelectorAll('.chip[data-group]').forEach(btn => {
@@ -381,16 +314,6 @@ document.querySelectorAll('th.sortable').forEach(th => {
 
 $('#q').addEventListener('input', e => { filters.text = e.target.value.trim(); render(); });
 
-$('#expand').addEventListener('click', () => {
-  if (allExpanded()){
-    foldAll();
-  } else {
-    closedGroups.clear();
-    for (const g of groups) for (const s of g.subs) openDescs.add(s.id);
-  }
-  render();
-});
-
 function clearFilters(){
   filters.text = ''; filters.p.clear(); filters.donation.clear();
   $('#q').value = '';
@@ -400,53 +323,49 @@ function clearFilters(){
 $('#reset').addEventListener('click', () => {
   clearFilters();
   sort = {key:null, dir:1};
-  foldAll();
+  openDescs.clear();
   render();
 });
 
-/* Direct links: #jj-05 opens that group; #jj-05.3 also brings the task into view. */
+/* Direct links: #jj-05 brings that task into view and opens its explanation. */
 function openFromHash(){
-  const m = /^#(jj-\d+)(?:\.(\d+))?$/i.exec(location.hash);
+  const m = /^#(jj-\d+)$/i.exec(location.hash);
   if (!m) return;
-  const g = groups.find(x => x.id.toUpperCase() === m[1].toUpperCase());
-  if (!g) return;
-  if (closedGroups.has(g.id)){ closedGroups.delete(g.id); render(); }
-  let target = document.querySelector('tr.grp[data-g="' + g.id + '"]');
-  if (m[2]){
-    const btn = document.querySelector('button.exp[data-s="' + g.id + '.' + m[2] + '"]');
-    if (btn) target = btn.closest('tr');
-  }
-  if (target) target.scrollIntoView({block:'start'});
+  const s = tasks.find(x => x.id.toUpperCase() === m[1].toUpperCase());
+  if (!s) return;
+  openDescs.add(s.id);
+  render();
+  const row = document.querySelector('tr.task-row[id="' + s.id.toLowerCase() + '"]');
+  if (row) row.scrollIntoView({block:'start'});
 }
 window.addEventListener('hashchange', openFromHash);
 
-/* Printing: unfold every group for the paper copy, then put the view back. */
+/* Printing: open every explanation for the paper copy, then put the view back. */
 let printState = null;
 window.addEventListener('beforeprint', () => {
-  printState = {closed:[...closedGroups], open:[...openDescs]};
-  closedGroups.clear();
+  printState = [...openDescs];
+  for (const s of tasks) openDescs.add(s.id);
   render();
 });
 window.addEventListener('afterprint', () => {
   if (!printState) return;
-  closedGroups.clear(); for (const id of printState.closed) closedGroups.add(id);
-  openDescs.clear(); for (const id of printState.open) openDescs.add(id);
+  openDescs.clear(); for (const id of printState) openDescs.add(id);
   printState = null;
   render();
 });
 
 (async function load(){
-  groups = EMBEDDED;
-  foldAll();
+  tasks = EMBEDDED;
   render();
   openFromHash();
   try {
     const res = await fetch('jj.md', {cache:'no-store'});
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const live = parseMd(await res.text());
-    if (!live.length) throw new Error('no task groups found');
-    groups = live;
+    if (!live.length) throw new Error('no tasks found');
+    tasks = live;
     render();
+    openFromHash();
   } catch (e) { /* keep the embedded snapshot */ }
 })();
 </script>
