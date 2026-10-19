@@ -135,6 +135,15 @@ try { var t = localStorage.getItem('jj-theme'); if (t) document.documentElement.
     #tbl td.empty{ padding:24px 14px; }
   }
 
+  /* Picked rows: the muted greys are unreadable on the amber tint — use full foreground. */
+  #tbl tr.sub.pick td.mono,
+  #tbl tr.sub.pick td:nth-child(3),
+  #tbl tr.sub.pick .don-med,
+  #tbl tr.sub.pick .don-low{ color:var(--fg); }
+  #tbl tr.sub.pick td:nth-child(3)::before,
+  #tbl tr.sub.pick td:nth-child(4)::before,
+  #tbl tr.sub.pick td:nth-child(5)::before{ color:var(--fg); }
+
   /* Print: the JS unfolds everything first; keep the header static on paper. */
   @media print{
     thead th{ position:static; }
