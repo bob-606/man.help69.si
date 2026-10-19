@@ -4,7 +4,7 @@ Status: role lens · Task list: [`jj.md`](jj.md) · Source: `../TASKS.md` (99 ta
 
 This is the engineering slice of the task backlog: what the AI Engineer / Software
 Engineer / Systems Builder owns, in what order, and with what interfaces. The numbered
-task list itself — 10 main tasks with 36 subtasks, carrying time, donation impact, and priority — lives in
+task list itself — 11 main tasks with 41 subtasks, carrying time, donation impact, and priority — lives in
 [`jj.md`](jj.md); this document is the role lens on it. T-xx references belong to the
 organisation-wide backlog in `TASKS.md`.
 
@@ -18,8 +18,8 @@ run on: integrations, pipelines, reconciliation, fulfillment automation.
 - **Exceptions are visible:** every automation keeps a manual path for unmatched/rejected cases.
 - **Sensitive data:** donor records in scope — self-hosted tooling preferred (see §6).
 
-Scope size: **33 Eng-owned + 3 shared tasks**. Distribution: P0 = 18 Eng,
-P1 = 12 Eng, P3 = 3 Eng.
+Scope size: **38 Eng-owned + 3 shared tasks**. Distribution: P0 = 18 Eng,
+P1 = 16 Eng, P2 = 1 Eng, P3 = 3 Eng.
 
 ## 2. Owner map (TASKS.md column "Owner")
 
@@ -43,6 +43,7 @@ P1 = 12 Eng, P3 = 3 Eng.
 | 6 | Leleka (Slack agent) | JJ-01.3, JJ-01.4, JJ-01.5 | 6–10 wk | Insights agent; gated on track 2's data layer |
 | 7 | Growth builds | JJ-08.1, JJ-08.2, JJ-08.3 | parallel | New crypto payment channels (not a priority for now) |
 | 8 | MilOps + ops tooling | JJ-09.1–JJ-09.4, JJ-10.1–JJ-10.3 | parallel | Utility builds and risk tooling |
+| 9 | Social publishing | JJ-11.1 → JJ-11.3 → JJ-11.2 → JJ-11.5 (JJ-11.4 optional) | parallel | Campaign reach without manual posting; per-channel donation attribution |
 
 ## 4. First 90 days
 
@@ -57,7 +58,7 @@ P1 = 12 Eng, P3 = 3 Eng.
 
 ## 5. Task list (Eng-owned + shared)
 
-See [`jj.md`](jj.md) — 10 main tasks with 36 subtasks, each with time, donation impact, and priority.
+See [`jj.md`](jj.md) — 11 main tasks with 41 subtasks, each with time, donation impact, and priority.
 
 ## 6. Interfaces & constraints (manual §5.4)
 
